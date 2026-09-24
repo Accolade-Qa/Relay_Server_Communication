@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LAN Control Panel</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #111827;
+        color: #f9fafb;
+        margin: 0;
+        padding: 24px;
+      }
+      .card {
+        max-width: 420px;
+        margin: 0 auto;
+        background: #1f2937;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.25);
+      }
+      h2 { margin-top: 0; }
+      label {
+        display: block;
+        margin-top: 12px;
+        font-size: 14px;
+      }
+      input, button {
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 6px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #374151;
+        font-size: 16px;
+      }
+      input {
+        background: #0f172a;
+        color: white;
+      }
+      button {
+        margin-top: 18px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .result {
+        margin-top: 18px;
+        background: #0b1220;
+        border: 1px solid #374151;
+        border-radius: 8px;
+        padding: 12px;
+        white-space: pre-wrap;
+      }
+      .status {
+        margin-top: 12px;
+        font-size: 14px;
+        color: #93c5fd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Control Panel</h2>
+      <label for="serverUrl">Server URL</label>
+      <input id="serverUrl" value="http://192.168.2.139:9204" />
+
+      <label for="requestId">Request ID</label>
+      <input id="requestId" value="mobile-demo-001" />
+
+      <label for="command">Command</label>
+      <input id="command" value="1011" maxlength="4" />
+
+      <button id="sendBtn">Send Command</button>
+      <div id="status" class="status">Ready</div>
+      <div id="result" class="result">No response yet.</div>
+    </div>
+
+    <script>
+      const sendBtn = document.getElementById('sendBtn');
+      const statusEl = document.getElementById('status');
+      const resultEl = document.getElementById('result');
+
+      sendBtn.addEventListener('click', async () => {
+        const baseUrl = document.getElementById('serverUrl').value.trim();
+        const requestId = document.getElementById('requestId').value.trim();
+        const command = document.getElementById('command').value.trim();
+
+        statusEl.textContent = 'Sending...';
+        resultEl.textContent = '';
+
+        try {
+          const response = await fetch(`${baseUrl}/command`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ request_id: requestId, command })
+          });
+
+          const data = await response.json();
+          statusEl.textContent = `HTTP ${response.status}`;
+          resultEl.textContent = JSON.stringify(data, null, 2);
+        } catch (error) {
+          statusEl.textContent = 'Error';
+          resultEl.textContent = String(error);
+        }
+      });
+    </script>
+  </body>
+</html>

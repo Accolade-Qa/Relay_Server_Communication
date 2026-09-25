@@ -86,3 +86,13 @@ For the local trusted-network setup, confirm:
 3. Invalid commands fail with structured errors.
 4. The validator rejects all invalid test cases.
 5. The app is reachable from other devices on the same LAN using the machine IP, such as `http://192.168.1.10:8000`.
+
+
+# 
+```
+python -m http.server 8080
+```
+
+```
+.\.venv\Scripts\python.exe -m uvicorn server.main:app --host 0.0.0.0 --port 9204
+```
